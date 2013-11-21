@@ -1,0 +1,19 @@
+{
+  "name": "node-dojo",
+  "version": "0.0.0",
+  "description": "A step by step repo to Node.js",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "istanbul cover --detail _mocha -- -R list test/test-*.js"
+  },
+  "author": "Florent Jaby <florent.jaby@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "~1.8.1",
+    "mocha": "~1.14.0",
+    "istanbul": "~0.1.45"
+  }
+}

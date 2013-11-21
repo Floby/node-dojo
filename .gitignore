@@ -1,0 +1,9 @@
+# npm dependencies
+node_modules
+
+# istanbul coverage info
+/coverage
+
+# vim files
+.*.un~
+.*.sw[a-z]
