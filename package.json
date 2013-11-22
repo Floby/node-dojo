@@ -14,6 +14,8 @@
   "devDependencies": {
     "chai": "~1.8.1",
     "mocha": "~1.14.0",
-    "istanbul": "~0.1.45"
+    "istanbul": "~0.1.45",
+    "supertest": "~0.8.1",
+    "trycatch": "~1.0.5"
   }
 }

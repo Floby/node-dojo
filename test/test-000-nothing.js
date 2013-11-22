@@ -1,4 +1,4 @@
-var app = require('../');
+var App = require('../');
 var expect = require('chai').expect;
 
 describe('My app', function () {
