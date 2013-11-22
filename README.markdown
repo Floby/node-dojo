@@ -1,18 +1,11 @@
 This is the master branch...
 This is YOUR branch.
 
-A wild test appeared in the `test` directory called test-010-hello-world
-This test is failing :(
+Another test appeared in the test directory. That one's called `test-020-hello-world`
 
-Make whatever is needed to make the test suite pass (running `npm test`)
-Be careful, your test have setup and teardown steps !
+Make whatever's needed to make the test suite pass
 
+You may need to read those:
 
-
-You may need to read these :
-
- * http://visionmedia.github.io/mocha/
- * http://chaijs.com/api/bdd/
- * https://github.com/visionmedia/supertest
- * http://nodejs.org/api/http.html
- * http://nodejs.org/api/util.html#util_util_inherits_constructor_superconstructor
+  * http://nodejs.org/api/http.html#http_http_incomingmessage
+  * http://nodejs.org/api/url.html
