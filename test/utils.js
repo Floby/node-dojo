@@ -1,4 +1,6 @@
+var ws = require('ws');
 var App = require('../');
+
 module.exports = {
   server: function () {
     var server;
@@ -18,5 +20,9 @@ module.exports = {
       server.reset(done);
     });
     return server;
+  },
+  sockjs: function (uri) {
+    uri = uri + '/websocket';
+    return new ws(uri);
   }
 }
