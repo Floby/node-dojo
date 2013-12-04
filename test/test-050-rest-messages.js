@@ -12,7 +12,7 @@ describe('The /messages endpoint', function () {
         .get('/messages')
         .expect(200)
         .expect('Content-Type', /application\/json/)
-        .expect(JSON.stringify([]))
+        .expect([])
         .end(done)
     });
   });
@@ -44,7 +44,7 @@ describe('The /messages endpoint', function () {
         .get('/messages')
         .expect(200)
         .expect('Content-Type', /application\/json/)
-        .expect(JSON.stringify(expected))
+        .expect(expected)
         .end(done)
     });
   });
