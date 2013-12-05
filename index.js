@@ -1,3 +1,4 @@
+var net = require('net');
 var sockjs = require('sockjs');
 var http = require('http');
 var util = require('util');
@@ -5,6 +6,7 @@ var express = require('express');
 
 function Application (options) {
   this.port = options.port;
+  this.syncPort = options.syncPort || 0;
   this.app = express();
   var self = this;
 
@@ -45,19 +47,25 @@ function Application (options) {
       self._connectedClients.splice(index, 1);
     });
   });
+
+  this.syncServer = net.createServer();
 }
 
 var m = Application.prototype;
 m.start = function start(callback) {
   this._sockjsServer.installHandlers(this.server, {prefix: '/new-messages', log: function () {}});
   this.server.listen(this.port, callback);
+  this.syncServer.listen(this.syncPort);
 };
 
 m.stop = function stop(callback) {
+  var self = this;
   this._connectedClients.forEach(function (client) {
     client.close();
-  })
-  this.server.close(callback);
+  });
+  this.server.close(function () {
+    self.syncServer.close(callback);
+  });
 };
 
 m.reset = function reset(callback) {
