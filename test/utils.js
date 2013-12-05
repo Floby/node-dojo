@@ -2,12 +2,13 @@ var ws = require('ws');
 var App = require('../');
 
 module.exports = {
-  server: function () {
+  server: function (options) {
     var server;
+    options = options || {};
+    options.port = options.port || 8081;
+    console.log('options', options)
     before(function (done) {
-      server = new App({
-        port: 8081
-      });
+      server = new App(options);
       server.start(done);
     });
     
