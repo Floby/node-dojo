@@ -12,6 +12,9 @@ function Application (options) {
     res.header('X-Custom-Header', 'My own thing');
     next();
   });
+
+  this.app.use(express.static(__dirname + '/public'));
+
   this.app.get('/greet', function (req, res) {
     res.header('Content-Type', 'text/plain');
     res.end('Hello World!');
