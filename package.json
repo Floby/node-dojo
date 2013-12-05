@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "istanbul cover --detail _mocha -- -R list test/test-*.js"
+    "test": "istanbul cover --detail _mocha -- -R list test/test-*.js",
+    "start": "node bin/my-chat.js"
   },
   "author": "Florent Jaby <florent.jaby@gmail.com>",
   "license": "MIT",
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "express": "~3.4.4",
-    "sockjs": "~0.3.8"
+    "sockjs": "~0.3.8",
+    "optimist": "~0.6.0"
   }
 }
