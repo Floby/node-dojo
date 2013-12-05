@@ -1,16 +1,25 @@
+Now, it's ok to run a chat app locally. It's still better to have
+people to talk with.
 
-You may have noticed that he still haven't seen what our "webapp"
-looks like. We can't even start it for anything else than testing !
+I could tell you to just push your app on Heroku, but that's
+so trivial that I'm not even gonna give you the link for the docs >:]
 
-Well, that's not the case anymore. You can now spin up your server
-with the `npm start` command. I've set it up for you =)
+However, I can suggest you port your application to a peer-to-peer
+architecture. Wouldn't that be awesome?
 
-If you need more options, you can also run `node bin/my-chat.js --help`
+First step is to allow replication of your data model by other peers.
+Luckily, you only manage an append-only list of messages. That shouldn't
+be too much work.
 
-AND MORE ! I've created a very simple browser app that works with
-your server. It lives in the /public and has quite a few files.
+Use `scuttlebutt` and more specifically `append-only` to replicate
+your data structure with peer connecting on a specified port
 
-You need to serve that static content through your webserver.
+Do whatever's needed to make this test suite pass ;)
+that might be a little more work than usual
 
+You probably should have a look at these:
 
-As usual, do whatever's needed to make the test suite pass
+  * https://github.com/dominictarr/scuttlebutt
+  * https://github.com/Raynos/append-only
+  * http://nodejs.org/api/net.html
+
