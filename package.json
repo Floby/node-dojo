@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "istanbul cover --detail _mocha -- -R list test/test-*.js",
+    "test": "istanbul cover _mocha -- -R list test/test-*.js",
     "start": "node bin/my-chat.js"
   },
   "author": "Florent Jaby <florent.jaby@gmail.com>",
