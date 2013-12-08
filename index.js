@@ -5,6 +5,7 @@ var util = require('util');
 var express = require('express');
 var appendOnly = require('append-only');
 var request = require('request');
+var polo = require('polo');
 
 function Application (options) {
   this.port = options.port;
@@ -50,12 +51,36 @@ function Application (options) {
   });
 
   this._syncingWith = {};
+
+  this._name = 'my-octo-chat-' + Math.random();
+
+  if(options.localPeerDiscovery) {
+    this._polo = polo({monitor: true});
+    this._polo.on('up', function(name, service) {
+      if(!/^my-octo-chat/.test(name)) return;
+      if(name === self._name) return;
+      if(!self._started) return;
+      self.startSync(service.port, service.host);
+    });
+    this.server.on('listening', function() {
+      self._polo.put({
+        name: self._name,
+        port: self.server.address().port
+      });
+    });
+  }
 }
 
 var m = Application.prototype;
 m.start = function start(callback) {
+  var self = this;
   this._sockjsServer.installHandlers(this.server, {prefix: '/new-messages', log: function () {}});
   this.server.listen(this.port, callback);
+  this.server.on('listening', function() {
+    self.port = this.address().port;
+    self._started = true;
+  });
+
 };
 
 m.stop = function stop(callback) {
@@ -67,10 +92,14 @@ m.stop = function stop(callback) {
     this._syncingWith[uri].end();
   }
   this.server.close(callback);
+  this._started = false;
 };
 
 m.reset = function reset(callback) {
   this._messages = this._createAppendOnly();
+  for(var uri in this._syncingWith) {
+    this._syncingWith[uri].end();
+  }
   this._syncingWith = {};
   callback();
 }
