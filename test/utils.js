@@ -3,23 +3,23 @@ var App = require('../');
 
 module.exports = {
   server: function (options) {
-    var server;
+    var res = {};
     options = options || {};
     options.port = options.port || 8081;
     before(function (done) {
-      server = new App(options);
-      server.start(done);
+      res.server = new App(options);
+      res.server.start(done);
     });
     
     after(function (done) {
-      server.stop(done);
-      server = null;
+      res.server.stop(done);
+      res.server = null;
     });
 
     beforeEach(function (done) {
-      server.reset(done);
+      res.server.reset(done);
     });
-    return server;
+    return res;
   },
   sockjs: function (uri) {
     uri = uri + '/websocket';
