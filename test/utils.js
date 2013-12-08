@@ -6,7 +6,6 @@ module.exports = {
     var server;
     options = options || {};
     options.port = options.port || 8081;
-    console.log('options', options)
     before(function (done) {
       server = new App(options);
       server.start(done);

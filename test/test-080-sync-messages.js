@@ -2,22 +2,31 @@ var utils = require('./utils');
 var expect = require('chai').expect;
 var trycatch = require('trycatch');
 var supertest = require('supertest');
-var net = require('net');
+var request = require('request');
+var appendOnly = require('append-only');
 
 describe('The synchronization system', function () {
-  utils.server({
-    syncPort: 8585
-  });
+  utils.server();
 
-  it('Should allow connections on specified port', function (done) {
+  it('should be a long-lived connection on endpoint /sync', function (done) {
     trycatch(function () {
-      var socket = net.connect(8585, function () {
-        socket.end(done);
+      var syncStream = request.post('http://localhost:8081/sync');
+      var list = appendOnly();
+      syncStream.pipe(list.createStream()).pipe(syncStream);
+      list.on('item', function(item) {
+        expect(item).to.be.an('object');
+        expect(item.author).to.equal('bobby');
+        expect(item.body).to.equal('Hello');
+        syncStream.end();
+        done();
       });
-    }, done);
-  });
+
+      supertest('http://localhost:8081')
+        .post('/messages')
+        .send({author: 'bobby', body: 'Hello'})
+        .end(function () {})
+
+    }, done)
+  })
 });
-
-
-
 

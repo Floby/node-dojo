@@ -18,11 +18,13 @@
     "istanbul": "~0.1.45",
     "supertest": "~0.8.1",
     "trycatch": "~1.0.5",
-    "ws": "~0.4.31"
+    "ws": "~0.4.31",
+    "request": "~2.29.0"
   },
   "dependencies": {
     "express": "~3.4.4",
     "sockjs": "~0.3.8",
-    "optimist": "~0.6.0"
+    "optimist": "~0.6.0",
+    "append-only": "~0.2.3"
   }
 }
