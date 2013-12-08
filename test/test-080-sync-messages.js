@@ -27,6 +27,48 @@ describe('The synchronization system', function () {
         .end(function () {})
 
     }, done)
-  })
+  });
+
+  it('appends messages from sync to its /messages resource', function (done) {
+    trycatch(function () {
+      var syncStream = request.post('http://localhost:8081/sync');
+      var list = appendOnly();
+      syncStream.pipe(list.createStream()).pipe(syncStream);
+
+      list.push({author:'bobby', body: 'bye'});
+
+      setTimeout(function () {
+        syncStream.end();
+        supertest('http://localhost:8081')
+          .get('/messages')
+          .expect([{author:'bobby', body: 'bye'}])
+          .end(done)
+      }, 20);
+
+    }, done)
+  });
+  
+  it('notifies the client of the websocket stream of newly synced messages', function (done) {
+    trycatch(function () {
+      var ws = utils.sockjs('ws://localhost:8081/new-messages');
+      ws.on('message', onMessage);
+
+      var syncStream = request.post('http://localhost:8081/sync');
+      var list = appendOnly();
+      syncStream.pipe(list.createStream()).pipe(syncStream);
+
+      list.push({author:'bobby', body: 'good morning'});
+
+      function onMessage (message) {
+        syncStream.end();
+        message = JSON.parse(message);
+        expect(message).to.be.an('object');
+        expect(message.event).to.equal('newMessage');
+        expect(message.author).to.equal('bobby');
+        expect(message.body).to.equal('good morning');
+        done();
+      };
+    }, done);
+  });
 });
 
