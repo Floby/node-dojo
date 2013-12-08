@@ -3,10 +3,10 @@ var sockjs = require('sockjs');
 var http = require('http');
 var util = require('util');
 var express = require('express');
+var appendOnly = require('append-only');
 
 function Application (options) {
   this.port = options.port;
-  this.syncPort = options.syncPort || 0;
   this.app = express();
   var self = this;
 
@@ -17,12 +17,17 @@ function Application (options) {
 
   this.app.use(express.static(__dirname + '/public'));
 
+  this.app.post('/sync', function (req, res) {
+    var syncStream = self._messages.createStream();
+    req.pipe(syncStream).pipe(res);
+  });
+
   this.app.get('/greet', function (req, res) {
     res.header('Content-Type', 'text/plain');
     res.end('Hello World!');
   });
   this.app.get('/messages', function (req, res) {
-    res.json(self._messages);
+    res.json(self._messages.createArray());
   });
   this.app.post('/messages', express.json(), function (req, res) {
     self._messages.push(req.body);
@@ -35,7 +40,7 @@ function Application (options) {
     });
   });
   this.server = http.createServer(this.app);
-  this._messages = [];
+  this._messages = appendOnly();
 
   this._connectedClients = [];
   this._sockjsServer = sockjs.createServer();
@@ -48,14 +53,12 @@ function Application (options) {
     });
   });
 
-  this.syncServer = net.createServer();
 }
 
 var m = Application.prototype;
 m.start = function start(callback) {
   this._sockjsServer.installHandlers(this.server, {prefix: '/new-messages', log: function () {}});
   this.server.listen(this.port, callback);
-  this.syncServer.listen(this.syncPort);
 };
 
 m.stop = function stop(callback) {
@@ -63,13 +66,11 @@ m.stop = function stop(callback) {
   this._connectedClients.forEach(function (client) {
     client.close();
   });
-  this.server.close(function () {
-    self.syncServer.close(callback);
-  });
+  this.server.close(callback);
 };
 
 m.reset = function reset(callback) {
-  this._messages = [];
+  this._messages = appendOnly();
   callback();
 }
 
