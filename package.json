@@ -25,6 +25,8 @@
     "express": "~3.4.4",
     "sockjs": "~0.3.8",
     "optimist": "~0.6.0",
-    "append-only": "~0.2.3"
+    "append-only": "~0.2.3",
+    "node-uuid": "~1.4.1",
+    "polo": "~0.5.5"
   }
 }
