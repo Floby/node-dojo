@@ -32,15 +32,10 @@ function Application (options) {
   this.app.post('/messages', express.json(), function (req, res) {
     self._messages.push(req.body);
     res.send(201);
-
-    // notify all currently connected clients
-    var event = {event: 'newMessage', author: req.body.author, body: req.body.body};
-    self._connectedClients.forEach(function (client) {
-      client.write(JSON.stringify(event));
-    });
   });
   this.server = http.createServer(this.app);
-  this._messages = appendOnly();
+
+  this._messages = this._createAppendOnly();
 
   this._connectedClients = [];
   this._sockjsServer = sockjs.createServer();
@@ -70,8 +65,22 @@ m.stop = function stop(callback) {
 };
 
 m.reset = function reset(callback) {
-  this._messages = appendOnly();
+  this._messages = this._createAppendOnly();
   callback();
+}
+
+m._createAppendOnly = function () {
+  var list = appendOnly();
+  var self = this;
+  list.on('item', this._notifyWebsocketClients.bind(this));
+  return list;
+}
+
+m._notifyWebsocketClients = function (message) {
+  var event = {event: 'newMessage', author: message.author, body: message.body};
+  this._connectedClients.forEach(function (client) {
+    client.write(JSON.stringify(event));
+  });
 }
 
 module.exports = Application;
