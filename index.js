@@ -4,6 +4,7 @@ var http = require('http');
 var util = require('util');
 var express = require('express');
 var appendOnly = require('append-only');
+var request = require('request');
 
 function Application (options) {
   this.port = options.port;
@@ -48,6 +49,7 @@ function Application (options) {
     });
   });
 
+  this._syncingWith = {};
 }
 
 var m = Application.prototype;
@@ -61,13 +63,26 @@ m.stop = function stop(callback) {
   this._connectedClients.forEach(function (client) {
     client.close();
   });
+  for(var uri in this._syncingWith) {
+    this._syncingWith[uri].end();
+  }
   this.server.close(callback);
 };
 
 m.reset = function reset(callback) {
   this._messages = this._createAppendOnly();
+  this._syncingWith = {};
   callback();
 }
+
+m.startSync = function startSync(port, host) {
+  port = Number(port);
+  host = host || 'localhost';
+  var uri = 'http://' + host + ':' + port + '/sync';
+  var syncStream = request.post(uri);
+  this._syncingWith[uri] = syncStream;
+  syncStream.pipe(this._messages.createStream()).pipe(syncStream);
+};
 
 m._createAppendOnly = function () {
   var list = appendOnly();
