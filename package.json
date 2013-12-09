@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "istanbul cover _mocha -- -R list test/test-*.js",
-    "start": "node bin/my-chat.js"
+    "start": "bin/my-chat.js --local-peer-discovery"
   },
   "author": "Florent Jaby <florent.jaby@gmail.com>",
   "license": "MIT",
